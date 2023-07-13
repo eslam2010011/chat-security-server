@@ -5,6 +5,7 @@ import os
 from pysondb import db
 
 file_path_session = os.path.join('database', 'session.json')
+print(file_path_session)
 file_path_chat = os.path.join('database')
 file_path_job = os.path.join('database', 'apscheduler.json')
 file_path_scripts = os.path.join('database', 'scripts.json')
@@ -13,9 +14,13 @@ file_path_scripts = os.path.join('database', 'scripts.json')
 # hour=hour, minute=minute
 class SessionManager:
     def __init__(self):
-        self.session = db.getDb(file_path_session)
-        self.jobs = db.getDb(file_path_job)
-        self.scripts = db.getDb(file_path_scripts)
+        try:
+            self.session = db.getDb(file_path_session)
+            print(file_path_session)
+            self.jobs = db.getDb(file_path_job)
+            self.scripts = db.getDb(file_path_scripts)
+        except FileNotFoundError:
+            print("FileNotFoundError")
 
     def add_job(self, job_id, time_zone, task, hour, minute, name):
         dt = datetime.now()
