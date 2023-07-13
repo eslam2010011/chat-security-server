@@ -14,7 +14,7 @@ from app.core.SubprocessManager import SubprocessManager
 from app.core.UpdateManager import UpdateManager
 from app.core.YAMLFileManager import YAMLFileManager
 
-file_path_programs = os.path.join('app', 'programs.yaml')
+file_path_programs = os.path.join('resources', 'programs.yaml')
 
 
 class ToolRunner:
