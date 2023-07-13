@@ -1,0 +1,239 @@
+tools:
+- category: Subdomain
+  tools:
+  - author: projectdiscovery
+    command: subfinder -d {domain}
+    description: Subfinder is a subdomain discovery tool that discovers valid subdomains
+      for websites. Designed as a passive framework to be useful for bug bounties
+      and safe for penetration testing.
+    install:
+    - go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
+    name: subfinder
+    url: https://github.com/projectdiscovery/subfinder
+  - author: trickest
+    command: amass enum -d {domain}
+    description: In-depth Attack Surface Mapping and Asset Discovery
+    help: amass -h
+    install:
+    - go install -v github.com/owasp-amass/amass/v3/...@master
+    name: amass
+    url: https://github.com/owasp-amass/amass
+  - author: trickest
+    command: dsieve -h
+    description: Filter and enrich a list of subdomains by level
+    install:
+    - go install github.com/trickest/dsieve@latest
+    name: dsieve
+    url: https://github.com/trickest/dsieve
+  - command: csprecon -u {domain}
+    install:
+    - go install github.com/edoardottt/csprecon/cmd/csprecon@latest
+    name: csprecon
+  - command: cd {path}/Sublist3r && python sublist3r.py -d {domain}
+    install:
+    - git clone https://github.com/aboul3la/Sublist3r.git {path}/Sublist3r
+    - cd {path}/Sublist3r &&  pip install -r requirements.txt
+    name: Sublist3r
+- category: Wordlist
+  tools:
+  - command: null
+    install:
+    - git clone https://github.com/danielmiessler/SecLists.git {path}/SecLists
+    name: SecLists
+  - command: null
+    install:
+    - git clone https://github.com/projectdiscovery/nuclei-templates.git {path}/nuclei-templates
+    name: nuclei-templates
+  - command: null
+    install:
+    - git clone https://github.com/projectdiscovery/fuzzing-templates.git {path}/fuzzing-templates
+    name: fuzzing-templates
+- category: Fuzz
+  tools:
+  - command: ffuf -w {path}/SecLists/Discovery/Web-Content/apache.txt -u {domain}
+      -fs 4242
+    install:
+    - go install github.com/ffuf/ffuf/v2@latest
+    name: ffuf
+- category: Scanner
+  tools:
+  - command: nuclei -u {domain}
+    install:
+    - go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
+    name: nuclei
+  - command: osmedeus scan -t {domain}
+    install:
+    - go install -v github.com/j3ssie/osmedeus@latest
+    name: osmedeus
+  - author: Yogesh Ojha
+    description: A tool for XYZ
+    install:
+    - git clone https://github.com/yogeshojha/rengine.git
+    - cd rengine
+    - ./install.sh
+    name: rengine
+    url: https://github.com/yogeshojha/rengine
+- category: PortScanner
+  tools:
+  - command: naabu -host {domain}
+    install:
+    - go install -v github.com/projectdiscovery/naabu/v2/cmd/naabu@latest
+    name: naabu
+  - command: asnmap -d {domain} -silent
+    install:
+    - go install github.com/projectdiscovery/asnmap/cmd/asnmap@latest
+    name: asnmap
+  - command: mapcidr -h
+    install:
+    - go install -v github.com/projectdiscovery/mapcidr/cmd/mapcidr@latest
+    name: mapcidr
+- category: Crawling
+  tools:
+  - command: katana -u  {domain}
+    install:
+    - go install github.com/projectdiscovery/katana/cmd/katana@latest
+    name: katana
+  - command: waybackurls {domain}
+    install:
+    - go install github.com/tomnomnom/waybackurls@latest
+    name: waybackurls
+  - command: jsleak -h
+    install:
+    - go install github.com/channyein1337/jsleak@latest
+    name: jsleak
+  - command: gospider -q -s {domain}
+    install:
+    - go install github.com/jaeles-project/gospider@latest
+    name: gospider
+  - command: gau {domain}
+    install:
+    - go install github.com/lc/gau/v2/cmd/gau@latest
+    name: gau
+- category: Notify
+  tools:
+  - command: null
+    config: notify -provider-config providers.yaml
+    install:
+    - go install github.com/projectdiscovery/notify/cmd/notify@latest
+    name: notify
+- category: DDoS
+  tools:
+  - command: cd {path}/MHDDoS &&  python start.py bypass  {domain} 5 101 socks5.txt
+      100 3600
+    install:
+    - git clone https://github.com/MatrixTM/MHDDoS.git {path}/MHDDoS
+    - cd {path}/MHDDoS && pip install -r requirements.txt
+    name: MHDDoS
+- category: CMS
+  tools:
+  - command: wpscan --url {domain} -e ap --plugins-detection mixed --api-token YOUR_TOKEN
+    install:
+    - apt-get update && apt-get upgrade
+    name: wpscan
+- category: Mail
+  tools:
+  - command: cd {path}/SpoofThatMail &&  sh SpoofThatMail.sh -d {domain}
+    install:
+    - git clone https://github.com/v4d1/SpoofThatMail.git {path}/SpoofThatMail
+    name: SpoofThatMail
+  - command: cd {path}/spoofcheck &&  python3 spoofcheck.py  {domain}
+    install:
+    - git clone https://github.com/a6avind/spoofcheck.git {path}/spoofcheck
+    - cd {path}/spoofcheck && pip install -r requirements.txt
+    name: spoofcheck
+- category: Mobile
+  tools:
+  - command: cd {path}/Mobile-Security-Framework-MobSF && . venv/bin/activate && gunicorn
+      -b {serverip}:8004 mobsf.MobSF.wsgi:application --workers=1 --threads=10 --timeout=3600
+    install:
+    - git clone https://github.com/MobSF/Mobile-Security-Framework-MobSF.git {path}/Mobile-Security-Framework-MobSF
+    - cd {path}/Mobile-Security-Framework-MobSF && bash setup.sh
+    - cd {path}/Mobile-Security-Framework-MobSF && pip install -r requirements.txt
+    - cd {path}/Mobile-Security-Framework-MobSF && . venv/bin/activate &&  pip3 install
+      tzdata
+    name: Mobile-Security-Framework-MobSF
+- category: Brute-force
+  tools:
+  - command: gobuster dns -d {domain} -t 50 -w common-names.txt
+    install:
+    - go install github.com/OJ/gobuster/v3@latest && go install
+    name: gobuster
+- category: Takeover
+  tools:
+  - command: subzy command --target {domain}
+    install:
+    - go install -v github.com/LukaSikic/subzy@latest
+    name: subzy
+- category: DNS
+  tools:
+  - command: subfinder -silent -d {domain} | dnsx -silent
+    install:
+    - go install -v github.com/projectdiscovery/dnsx/cmd/dnsx@latest
+    name: dnsx
+- category: General
+  tools:
+  - command: crlfuzz -u {domain}
+    description: null
+    install:
+    - go install github.com/dwisiswant0/crlfuzz/cmd/crlfuzz@latest
+    name: crlfuzz
+  - command: dontgo403 -u {domain}
+    description: null
+    install:
+    - git clone https://github.com/devploit/dontgo403 {path}/dontgo403
+    - cd {path}/dontgo403  && go get && go build
+    name: dontgo403
+  - command: uncover -h
+    install:
+    - go install -v github.com/projectdiscovery/uncover/cmd/uncover@latest
+    name: uncover
+  - command: dalfox  -h
+    install:
+    - go install github.com/hahwul/dalfox/v2@latest
+    name: dalfox
+  - command: subfinder -d {domain} -silent| httpx -title -tech-detect -status-code
+    install:
+    - go install install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
+    name: httpx
+  - command: kxss -h
+    install:
+    - go install -v github.com/Emoe/kxss@latest
+    name: kxss
+- category: Information Gathering
+  tools:
+  - command: cd {path}/X_TO_X &&  python3 X_TO_X.py -d {domain} -l p
+    install:
+    - git clone https://github.com/eslam2010011/X_TO_X.git  {path}/X_TO_X
+    - cd {path}/X_TO_X && pip install -r requirements.txt
+    name: X_TO_X
+- category: Custom
+  tools:
+  - command: ls
+    description: eslamd asndkjas jkasndkjsan jasnfjk
+    install:
+    - go install github.com/projectdiscovery/katana/cmd/katana@latest
+    name: Eslam
+- category: info
+  tools:
+  - description: Collection of Cyber Threat Intelligence sources from the Deep and
+      Dark Web
+    name: deepdarkCTI
+    url: https://github.com/fastfire/deepdarkCTI
+  - description: OSINT Tools for the Dark Web
+    name: dark-web-osint-tools
+    url: https://github.com/apurvsinghgautam/dark-web-osint-tools
+  - description: OSINT Tools for the Dark Web2
+    name: dark-web-osint-tools
+    url: https://github.com/apurvsinghgautam/dark-web-osint-tools
+- category: Mobile
+  tools:
+  - command: adb connect {server ip}:5555
+    description: Docker-Android is a docker image built to be used for everything
+      related to Android. It can be used for Application development and testing (native,
+      web and hybrid-app).
+    install:
+    - docker run -d -p 6080:6080 -e EMULATOR_DEVICE="Samsung Galaxy S10" -e WEB_VNC=true
+      --device /dev/kvm --name android-container budtmo/docker-android:emulator_11.0
+    name: docker-android
+    url: https://github.com/budtmo/docker-android/tree/master
+version: 0.1
