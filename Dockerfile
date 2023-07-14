@@ -34,16 +34,17 @@ RUN unzip ${ANDROID_COMMAND_LINE_TOOLS_FILENAME} -d /usr/local/android-sdk-linux
 RUN rm ${ANDROID_COMMAND_LINE_TOOLS_FILENAME}
 
 RUN yes | sdkmanager --update --sdk_root="${ANDROID_HOME}"
+RUN yes | sdkmanager platform-tools --sdk_root="${ANDROID_HOME}"
+
 RUN yes | sdkmanager --sdk_root="${ANDROID_HOME}" "platforms;${ANDROID_API_LEVELS}" "build-tools;${ANDROID_BUILD_TOOLS_VERSION}" "extras;google;m2repository" "extras;android;m2repository" "extras;google;google_play_services"
 
 RUN yes | sdkmanager --licenses --sdk_root="${ANDROID_HOME}"
 
-RUN rm -rf ${ANDROID_HOME}/tools
+
+
 
 # Genymotion Cloud
 RUN pip3 install gmsaas
-ENV LC_ALL=C.UTF-8
-ENV LANG=C.UTF-8
 RUN gmsaas config set android-sdk-path ${ANDROID_HOME}
 
 # Install Docker
