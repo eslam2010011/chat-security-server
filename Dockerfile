@@ -25,11 +25,17 @@ RUN wget --quiet --output-document=android-sdk.zip https://dl.google.com/android
     unzip -q android-sdk.zip -d android-sdk && \
     rm android-sdk.zip
 
-ENV ANDROID_HOME=/android-sdk
-ENV PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin
+ENV ANDROID_BIN /android-sdk/cmdline-tools/bin
+ENV PATH=${ANDROID_BIN}:${PATH}
 
-RUN yes | sdkmanager --licenses
-RUN sdkmanager "platforms;android-30" "build-tools;30.0.2" "emulator"
+# Install Android tools
+RUN yes | $ANDROID_BIN/sdkmanager --licenses
+RUN yes | $ANDROID_BIN/sdkmanager "build-tools;30.0.2"
+RUN yes | $ANDROID_BIN/sdkmanager platform-tools
+RUN yes | $ANDROID_BIN/sdkmanager ndk-bundle
+RUN yes | $ANDROID_BIN/sdkmanager "ndk;22.1.7171670"
+RUN $ANDROID_BIN/sdkmanager "platforms;android-30"
+
 # Genymotion Cloud
 RUN pip3 install gmsaas
 ENV LC_ALL=C.UTF-8
