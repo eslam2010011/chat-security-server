@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y \
     python3-venv \
     nano \
     ruby-full \
-    openjdk-8-jdk \
+    openjdk-11-jdk \
     wget \
     git \
     curl \
@@ -16,9 +16,31 @@ RUN apt-get update && apt-get install -y \
     software-properties-common \
     systemd \
     rustc \
-    tor
+    tor \
+    unzip
+
+
 
 ARG DEBIAN_FRONTEND=noninteractive
+
+
+RUN wget --quiet --output-document=android-sdk.zip https://dl.google.com/android/repository/commandlinetools-linux-6858069_latest.zip && \
+    unzip android-sdk.zip -d android-sdk && \
+    rm android-sdk.zip \
+
+
+ENV ANDROID_HOME=/android-sdk
+ENV PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+RUN yes | sdkmanager --licenses
+RUN sdkmanager "platforms;android-30" "build-tools;build-tools;30.0.2" "emulator"
+
+# Genymotion Cloud
+RUN pip3 install gmsaas
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
+RUN gmsaas config set android-sdk-path $ANDROID_HOME
+
+
 
 # Install Docker
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
