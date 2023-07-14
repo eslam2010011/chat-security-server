@@ -19,20 +19,16 @@ RUN apt-get update && apt-get install -y \
     tor \
     unzip
 
-
-
 ARG DEBIAN_FRONTEND=noninteractive
 
-
 RUN wget --quiet --output-document=android-sdk.zip https://dl.google.com/android/repository/commandlinetools-linux-6858069_latest.zip && \
-    unzip android-sdk.zip -d android-sdk && \
-    rm android-sdk.zip \
-
+    unzip -q android-sdk.zip -d android-sdk && \
+    rm android-sdk.zip
 
 ENV ANDROID_HOME=/android-sdk
 ENV PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
-RUN yes | sdkmanager --licenses
-RUN sdkmanager "platforms;android-30" "build-tools;build-tools;30.0.2" "emulator"
+RUN yes | android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
+RUN android-sdk/cmdline-tools/latest/bin/sdkmanager "platforms;android-30" "build-tools;30.0.2" "emulator"
 
 # Genymotion Cloud
 RUN pip3 install gmsaas
@@ -40,13 +36,10 @@ ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 RUN gmsaas config set android-sdk-path $ANDROID_HOME
 
-
-
 # Install Docker
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
 RUN add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 RUN apt-get update && apt-get install -y docker-ce docker-ce-cli containerd.io
-
 
 # Install Node.js
 RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash -
@@ -59,14 +52,11 @@ RUN wget https://go.dev/dl/go1.20.5.linux-amd64.tar.gz && \
     rm go1.20.5.linux-amd64.tar.gz
 
 ENV PATH="/usr/local/go/bin:${PATH}"
-
-
 ENV GOPATH="/app/go"
 ENV PATH="${PATH}:${GOPATH}/bin"
 
 RUN echo "export PATH=\$PATH:${GOPATH}/bin" >> ~/.bashrc && \
     echo "export PATH=\$PATH:${GOPATH}/bin" >> ~/.profile
-
 
 RUN sed -i 's/^#\s*\(deb.*universe\)$/\1/g' /etc/apt/sources.list
 RUN apt-get update && apt-get install -y systemd-sysv
@@ -85,8 +75,4 @@ COPY . /app
 ENV SECRET_KEY=""
 
 CMD ["/lib/systemd/systemd"]
-
-#CMD ["service tor start"]
-
 CMD ["python3", "main.py"]
-
