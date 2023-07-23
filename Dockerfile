@@ -27,7 +27,11 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN echo 'root:password' | chpasswd
 RUN ssh-keygen -A
 
-EXPOSE 22
+# Change SSH port to 2222
+RUN sed -i 's/#Port 22/Port 2222/' /etc/ssh/sshd_config
+
+EXPOSE 2222 
+
 
 # Android
 #ENV ANDROID_COMMAND_LINE_TOOLS_FILENAME commandlinetools-linux-7583922_latest.zip
@@ -97,5 +101,5 @@ COPY . /app
 ENV SECRET_KEY=""
 
 CMD ["/lib/systemd/systemd"]
-CMD ["/usr/sbin/sshd", "-D"]
+CMD ["/usr/sbin/sshd", "-D", "-p", "2222"]
 CMD ["python3", "main.py"]
