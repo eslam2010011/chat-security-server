@@ -26,14 +26,17 @@ ARG DEBIAN_FRONTEND=noninteractive
 # Ssh
 RUN mkdir /var/run/sshd
 
-RUN useradd -m -d /home/myuser -s /bin/bash myuser && \
-    echo 'myuser:mypassword' | chpasswd && \
-    usermod -aG sudo myuser
+RUN echo 'root:password' | chpasswd
+
+RUN sed -i 's/#Port 22/Port 5053/' /etc/ssh/sshd_config
+RUN sed -i 's/#Port 22/Port 5053/' /etc/ssh/ssh_config
+
+RUN sed -i 's/#ListenAddress 0.0.0.0/ListenAddress 0.0.0.0/' /etc/ssh/sshd_config
+
 
 RUN ssh-keygen -A
 
 # Change SSH port to 2222
-RUN sed -i 's/Port 22/Port 5053/' /etc/ssh/sshd_config
 
 
 
