@@ -13,9 +13,12 @@ file_path_scripts = os.path.join('database', 'scripts.json')
 # hour=hour, minute=minute
 class SessionManager:
     def __init__(self):
-        self.session = db.getDb(file_path_session)
-        self.jobs = db.getDb(file_path_job)
-        self.scripts = db.getDb(file_path_scripts)
+        try:
+            self.session = db.getDb(file_path_session)
+            self.jobs = db.getDb(file_path_job)
+            self.scripts = db.getDb(file_path_scripts)
+        except FileNotFoundError:
+            print("FileNotFoundError")
 
     def add_job(self, job_id, time_zone, task, hour, minute, name):
         dt = datetime.now()
