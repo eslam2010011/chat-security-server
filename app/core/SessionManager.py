@@ -5,7 +5,6 @@ import os
 from pysondb import db
 
 file_path_session = os.path.join('database', 'session.json')
-print(file_path_session)
 file_path_chat = os.path.join('database')
 file_path_job = os.path.join('database', 'apscheduler.json')
 file_path_scripts = os.path.join('database', 'scripts.json')
@@ -14,13 +13,9 @@ file_path_scripts = os.path.join('database', 'scripts.json')
 # hour=hour, minute=minute
 class SessionManager:
     def __init__(self):
-        try:
-            self.session = db.getDb(file_path_session)
-            print(file_path_session)
-            self.jobs = db.getDb(file_path_job)
-            self.scripts = db.getDb(file_path_scripts)
-        except FileNotFoundError:
-            print("FileNotFoundError")
+        self.session = db.getDb(file_path_session)
+        self.jobs = db.getDb(file_path_job)
+        self.scripts = db.getDb(file_path_scripts)
 
     def add_job(self, job_id, time_zone, task, hour, minute, name):
         dt = datetime.now()
@@ -51,8 +46,8 @@ class SessionManager:
         return chat_Id
 
     def removeSession(self, sessionId_):
-        session = self.session.getById(sessionId_)
-        for tab in session["tabs"]:
+        session2 = self.session.getById(sessionId_)
+        for tab in session2["tabs"]:
             if os.path.isfile(f"{file_path_chat}/{tab}.json"):
                 os.remove(f"{file_path_chat}/{tab}.json")
         self.session.deleteById(int(sessionId_))
@@ -83,8 +78,7 @@ class SessionManager:
             return {"data": None}
 
     def createJob(self, job_id, command):
-        jobs = db.getDb(file_path_session)
-        data = jobs.add({"job_id": job_id, "command": command})
+        data = self.jobs.add({"job_id": job_id, "command": command})
         return data
 
     def getScripts(self, name):
