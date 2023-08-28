@@ -48,9 +48,9 @@ class SessionManager:
         self.session.updateById(sessionId_, {"tabs": tabs})
         return chat_Id
 
-    def removeSession(self, sessionId_):
-        session2 = self.session.getById(sessionId_)
-        for tab in session2["tabs"]:
+    def remove_session(self, sessionId_):
+        _session_ = self.session.getById(sessionId_)
+        for tab in _session_["tabs"]:
             if os.path.isfile(f"{file_path_chat}/{tab}.json"):
                 os.remove(f"{file_path_chat}/{tab}.json")
         self.session.deleteById(int(sessionId_))
